@@ -1,6 +1,3 @@
-/*
-Hello Twice!
-*/
 package main
 
 import (
