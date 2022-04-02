@@ -29,6 +29,8 @@ func main() {
 	}
 	defer g.Close()
 
+	g.Highlight = true
+	g.SelFgColor = gocui.ColorRed
 	g.SetManagerFunc(layout)
 
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
@@ -89,17 +91,6 @@ func layout(g *gocui.Gui) error {
 	if err = _new_label(g, "psw", X, Y+ALL_HEIGHT, LABEL_WID, ALL_HEIGHT); err != nil {
 		return err
 	}
-	_vname, err = g.SetView("username", X+LABEL_WID, Y, X+LABEL_WID+ENTRY_WID, Y+ALL_HEIGHT)
-	if err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		_vname.Editable = true
-		_vname.Wrap = false
-		if _, err := g.SetCurrentView("username"); err != nil {
-			return err
-		}
-	}
 	_vpsw, err = g.SetView("password", X+LABEL_WID, Y+ALL_HEIGHT, X+LABEL_WID+ENTRY_WID, Y+ALL_HEIGHT*2)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
@@ -117,6 +108,17 @@ func layout(g *gocui.Gui) error {
 		_info.Editable = true
 		_info.Wrap = true
 		_info.Frame = false
+	}
+	_vname, err = g.SetView("username", X+LABEL_WID, Y, X+LABEL_WID+ENTRY_WID, Y+ALL_HEIGHT)
+	if err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		_vname.Editable = true
+		_vname.Wrap = false
+		if _, err := g.SetCurrentView("username"); err != nil {
+			return err
+		}
 	}
 	return nil
 }

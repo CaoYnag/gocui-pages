@@ -13,72 +13,32 @@ import (
 )
 
 var (
-	_ctx  *gocui.View
+	_ctx  *gocui.View // msg area
 	_inp  *gocui.View // input area
 	_stat *gocui.View // user info
 	_info *gocui.View // info bar
 )
 
-const ()
+const (
+	STAT_HGT = 2
+	INP_HGT  = 4
+	INFO_HGT = 1
+
+	STAT = "stat"
+	INP  = "inp"
+	INFO = "info"
+	CTX  = "ctx"
+)
 
 func layout(g *gocui.Gui) error {
 	var err error
 	maxX, maxY := g.Size()
-	_nav, err = g.SetView(NAV, -1, -1, SIDE_WID, maxY)
+	_stat, err = g.SetView(STAT, -1, -1, maxX, STAT_HGT)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		_nav.Highlight = true
-		_nav.SelBgColor = gocui.ColorGreen
-		_nav.SelFgColor = gocui.ColorBlack
-		fmt.Fprintln(_nav, "Session")
-		fmt.Fprintln(_nav, "Users")
-		fmt.Fprintln(_nav, "Chat Rooms")
-		fmt.Fprint(_nav, "Settings")
-	}
-
-	_usrs, err = g.SetView(USRS, SIDE_WID, -1, maxX, maxY-INFO_HGT)
-	if err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		_nav.SelBgColor = gocui.ColorGreen
-		_nav.SelFgColor = gocui.ColorBlack
-		add_usr("spes2", true)
-		add_usr("spes3", false)
-		add_usr("ehh1", true)
-	}
-	_grps, err = g.SetView(GRPS, SIDE_WID, -1, maxX, maxY-INFO_HGT)
-	if err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		add_rooms("Just do IT")
-		add_rooms("老 司 机 带 带 窝 ! ")
-		add_rooms("游 戏 开 黑 搞 起 !")
-		add_rooms("三 月 读 书 会 ")
-	}
-	_settings, err = g.SetView(SETTINGS, SIDE_WID, -1, maxX, maxY-INFO_HGT)
-	if err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		fmt.Fprintf(_settings, "%s", SETTINGS)
-	}
-	_ssn, err = g.SetView(SSN, SIDE_WID, -1, maxX, maxY-INFO_HGT)
-	if err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		_ssn.Editable = true
-		_ssn.Autoscroll = true
-		if e := focus_view(g, SSN); e != nil {
-			return err
-		}
-		add_ssn("ehh", "hello", time.Now(), true)
-		add_ssn("ehh2", "hello", time.Now(), false)
-		add_ssn("Just do IT", "yes!", time.Now(), false)
+		fmt.Fprintln(_stat, "Ehh1") // user stat here
 	}
 
 	_info, err = g.SetView(INFO, -1, maxY-INFO_HGT, maxX, maxY)
@@ -90,8 +50,52 @@ func layout(g *gocui.Gui) error {
 		_info.Autoscroll = true
 		fmt.Fprintf(_info, "nothing...")
 	}
+	_inp, err = g.SetView(INP, -1, maxY-INFO_HGT-INP_HGT, maxX, maxY-INFO_HGT)
+	if err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		_inp.Editable = true
+		_inp.Autoscroll = true
+		g.SetCurrentView(INP)
+	}
+	_ctx, err = g.SetView(CTX, -1, STAT_HGT, maxX, maxY-INFO_HGT-INP_HGT)
+	if err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		_ctx.Editable = false
+		_ctx.Autoscroll = true
+		show_msg("ehh1", "在 嘛 ?", time.Now())
+		show_msg("spes", "不 在 !", time.Now())
+		show_msg("spes", "里 四 居 !", time.Now())
+	}
+	return nil
+}
 
-	_views = []*gocui.View{_ssn, _usrs, _grps, _settings}
+func show_msg(name, msg string, ts time.Time) {
+	if name == "spes" {
+		// self
+		fmt.Fprintf(_ctx, "\033[32;1m%s %s\033[0m\n", name, ts.Format("2006-01-02 15:04:05"))
+	} else {
+		fmt.Fprintf(_ctx, "\033[34;1m%s %s\033[0m\n", name, ts.Format("2006-01-02 15:04:05"))
+	}
+	fmt.Fprintf(_ctx, "%s\n\n", msg)
+}
+
+func keybindings(g *gocui.Gui) error {
+	// global
+	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
+		return err
+	}
+	// input
+	if err := g.SetKeybinding(INP, gocui.KeyEnter, gocui.ModNone, snd_msg); err != nil {
+		return err
+	}
+	if err := g.SetKeybinding(INP, gocui.KeyCtrlSpace, gocui.ModNone, new_line); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -100,6 +104,7 @@ func main() {
 	if err != nil {
 		log.Panicln(err)
 	}
+	g.Cursor = true
 	defer g.Close()
 
 	g.SetManagerFunc(layout)
@@ -111,4 +116,21 @@ func main() {
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Panicln(err)
 	}
+}
+
+func snd_msg(g *gocui.Gui, v *gocui.View) error {
+	show_msg("spes", _inp.Buffer(), time.Now())
+	_inp.Clear()
+	x, y := _inp.Origin()
+	_inp.SetCursor(x, y)
+	return nil
+}
+
+func new_line(g *gocui.Gui, v *gocui.View) error {
+	fmt.Fprintf(_inp, "\n")
+	return nil
+}
+
+func quit(g *gocui.Gui, v *gocui.View) error {
+	return gocui.ErrQuit
 }
