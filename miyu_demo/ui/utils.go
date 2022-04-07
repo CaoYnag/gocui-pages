@@ -14,10 +14,6 @@ func change_ui(ui CUI) (err error) {
 	if err != nil {
 		return
 	}
-	err = ui.Keybindings(_g)
-	if err != nil {
-		return
-	}
 	_g.SetManagerFunc(ui.Layout)
 	_cur = ui
 	return nil

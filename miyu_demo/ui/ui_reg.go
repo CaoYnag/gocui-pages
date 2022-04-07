@@ -4,7 +4,7 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
-type _login_ui struct {
+type _reg_ui struct {
 	_v     *gocui.View
 	_vname *gocui.View
 	_vpsw  *gocui.View
@@ -16,17 +16,17 @@ type _login_ui struct {
 	}
 }
 
-func GetLogin() *_login_ui {
-	return &_login_ui{}
+func GetReg() *_reg_ui {
+	return &_reg_ui{}
 }
 
-func (s *_login_ui) Init(g *gocui.Gui) error {
+func (s *_reg_ui) Init(g *gocui.Gui) error {
 	g.Highlight = true
 	g.SelFgColor = gocui.ColorRed
 	return nil
 }
 
-func (s *_login_ui) Layout(g *gocui.Gui) error {
+func (s *_reg_ui) Layout(g *gocui.Gui) error {
 	if e := s.Keybindings(g); e != nil {
 		return e
 	}
@@ -39,7 +39,7 @@ func (s *_login_ui) Layout(g *gocui.Gui) error {
 	}
 
 	var err error
-	s._v, err = g.SetView("login", 0, 0, maxX-1, maxY-1)
+	s._v, err = g.SetView("reg", 0, 0, maxX-1, maxY-1)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
@@ -88,22 +88,22 @@ func (s *_login_ui) Layout(g *gocui.Gui) error {
 	return nil
 }
 
-func (s *_login_ui) Keybindings(g *gocui.Gui) error {
+func (s *_reg_ui) Keybindings(g *gocui.Gui) error {
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
 		return err
 	}
 	if err := g.SetKeybinding("", gocui.KeyTab, gocui.ModNone, s.next_view); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding("password", gocui.KeyEnter, gocui.ModNone, s.do_login); err != nil {
+	if err := g.SetKeybinding("password", gocui.KeyEnter, gocui.ModNone, s.do_reg); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *_login_ui) Release() {}
+func (s *_reg_ui) Release() {}
 
-func (s *_login_ui) next_view(g *gocui.Gui, v *gocui.View) error {
+func (s *_reg_ui) next_view(g *gocui.Gui, v *gocui.View) error {
 	if s._act == 0 {
 		// name
 		if _, err := setCurrentViewOnTop(g, "password"); err != nil {
@@ -119,7 +119,7 @@ func (s *_login_ui) next_view(g *gocui.Gui, v *gocui.View) error {
 	}
 	return nil
 }
-func (s *_login_ui) do_login(g *gocui.Gui, v *gocui.View) error {
+func (s *_reg_ui) do_reg(g *gocui.Gui, v *gocui.View) error {
 	s._data.name = s._vname.Buffer()
 	s._data.psw = s._vpsw.Buffer()
 	// TODO handle success and failed

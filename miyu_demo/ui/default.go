@@ -15,6 +15,10 @@ func Init() error {
 	if err != nil {
 		return err
 	}
+	/*err = ui.Keybindings(_g)
+	if err != nil {
+		return
+	}*/
 	change_ui(GetLogin())
 	return nil
 }
