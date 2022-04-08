@@ -44,7 +44,7 @@ func (s *_reg_ui) Layout(g *gocui.Gui) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		s._v.Title = "Login"
+		s._v.Title = "Register"
 		s._v.Editable = false
 		s._v.Wrap = true
 	}
@@ -106,13 +106,13 @@ func (s *_reg_ui) Release() {}
 func (s *_reg_ui) next_view(g *gocui.Gui, v *gocui.View) error {
 	if s._act == 0 {
 		// name
-		if _, err := setCurrentViewOnTop(g, "password"); err != nil {
+		if _, err := set_cur_top_view(g, "password"); err != nil {
 			return err
 		}
 		s._act = 1
 	} else {
 		// psw
-		if _, err := setCurrentViewOnTop(g, "username"); err != nil {
+		if _, err := set_cur_top_view(g, "username"); err != nil {
 			return err
 		}
 		s._act = 0

@@ -24,6 +24,7 @@ func Init() error {
 }
 
 func Run() error {
+	defer _g.Close()
 	if err := _g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		return err
 	}
