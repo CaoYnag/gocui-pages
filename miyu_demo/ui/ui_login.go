@@ -41,6 +41,9 @@ func (s *_login_ui) Init() error {
 	s._act = 0
 
 	s._g.SetManagerFunc(s.layout)
+	if e := s.keybindings(s._g); e != nil {
+		return e
+	}
 	return nil
 }
 
@@ -56,9 +59,6 @@ func (s *_login_ui) Release() {
 }
 
 func (s *_login_ui) layout(g *gocui.Gui) error {
-	if e := s.keybindings(s._g); e != nil {
-		return e
-	}
 	maxX, maxY := g.Size()
 	if maxX > 80 {
 		maxX = 80

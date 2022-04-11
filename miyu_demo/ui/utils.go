@@ -50,6 +50,11 @@ func set_cur_top_view(g *gocui.Gui, name string) (*gocui.View, error) {
 	return g.SetViewOnTop(name)
 }
 
+func to_top(g *gocui.Gui, name string) error {
+	_, e := g.SetViewOnTop(name)
+	return e
+}
+
 func quit(g *gocui.Gui, v *gocui.View) error {
 	return gocui.ErrQuit
 }

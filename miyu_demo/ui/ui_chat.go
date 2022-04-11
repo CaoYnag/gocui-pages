@@ -1,18 +1,28 @@
+/*
+Chat UI
+TODO:
+- fix chinese display
+*/
+
 package ui
 
 import (
 	"fmt"
 	"time"
 
+	"github.com/d4l3k/go-highlight"
 	"github.com/jroimartin/gocui"
 )
 
 type _chat_ui struct {
-	_g    *gocui.Gui
-	_ctx  *gocui.View // msg area
-	_inp  *gocui.View // input area
-	_stat *gocui.View // user info
-	_info *gocui.View
+	_g      *gocui.Gui
+	_ctx    *gocui.View // msg area
+	_inp_nm *gocui.View // input area
+	_inp    int
+	_vinp   *gocui.View
+	_inp_md *gocui.View // markdown input area
+	_stat   *gocui.View // user info
+	_info   *gocui.View
 
 	_data struct {
 		name string
@@ -32,8 +42,12 @@ func (s *_chat_ui) Init() error {
 		return err
 	}
 	s._g.Cursor = true
+	s._inp = INPUT_NORMAL // default input method could be conf in settings
 
 	s._g.SetManagerFunc(s.layout)
+	if e := s.keybindings(s._g); e != nil {
+		return e
+	}
 	return nil
 }
 
@@ -49,9 +63,6 @@ func (s *_chat_ui) Release() {
 }
 
 func (s *_chat_ui) layout(g *gocui.Gui) error {
-	if e := s.keybindings(s._g); e != nil {
-		return e
-	}
 	maxX, maxY := g.Size()
 
 	var err error
@@ -72,14 +83,22 @@ func (s *_chat_ui) layout(g *gocui.Gui) error {
 		s._info.Autoscroll = true
 		fmt.Fprintf(s._info, "nothing...")
 	}
-	s._inp, err = g.SetView(INP, -1, maxY-WIDGET_HGT-INP_HGT, maxX, maxY-WIDGET_HGT)
+	s._inp_nm, err = g.SetView(INP_NM, -1, maxY-WIDGET_HGT-INP_HGT, maxX, maxY-WIDGET_HGT)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		s._inp.Editable = true
-		s._inp.Autoscroll = true
-		g.SetCurrentView(INP)
+		s._inp_nm.Editable = true
+		s._inp_nm.Autoscroll = true
+		g.SetCurrentView(INP_NM)
+	}
+	s._inp_md, err = g.SetView(INP_MD, -1, maxY-WIDGET_HGT-INP_HGT, maxX, maxY-WIDGET_HGT)
+	if err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		s._inp_md.Editable = true
+		s._inp_md.Autoscroll = true
 	}
 	s._ctx, err = g.SetView(CTX, -1, STAT_HGT, maxX, maxY-WIDGET_HGT-INP_HGT)
 	if err != nil {
@@ -96,15 +115,25 @@ func (s *_chat_ui) layout(g *gocui.Gui) error {
 }
 
 func (s *_chat_ui) keybindings(g *gocui.Gui) error {
-	if err := set_key_binding(g, GLOBAL, gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
+	// Global
+	if err := set_key_binding(g, GLOBAL, gocui.KeyCtrlC, gocui.ModNone, s.to_desktop); err != nil {
 		return err
 	}
-	// input
-	if err := set_key_binding(g, INP, gocui.KeyEnter, gocui.ModNone, s.snd_msg); err != nil {
+	if err := set_key_binding(g, GLOBAL, gocui.KeyCtrlS, gocui.ModNone, s.switch_inp); err != nil {
 		return err
 	}
-	// key conflict
-	if err := set_key_binding(g, INP, gocui.KeyCtrlSpace, gocui.ModNone, s.new_line); err != nil {
+
+	// input normal
+	if err := set_key_binding(g, INP_NM, gocui.KeyEnter, gocui.ModNone, s.snd_msg); err != nil {
+		return err
+	}
+	// TODO key conflict
+	if err := set_key_binding(g, INP_NM, gocui.KeyCtrlSpace, gocui.ModNone, s.new_line); err != nil {
+		return err
+	}
+
+	// input markdown
+	if err := set_key_binding(g, INP_MD, gocui.KeyCtrlSpace, gocui.ModNone, s.snd_msg); err != nil {
 		return err
 	}
 	return nil
@@ -124,17 +153,42 @@ func (s *_chat_ui) show_info(msg string) {
 	fmt.Fprintf(s._info, "\033[31;1m%s\033[0m", msg)
 }
 
+func highlight_code(lang, code string) string {
+	s, _ := highlight.Term(lang, []byte(code))
+	return string(s)
+}
 func (s *_chat_ui) snd_msg(g *gocui.Gui, v *gocui.View) error {
-	m := s._inp.Buffer()
+	m := s._vinp.Buffer()
 	m = m[:len(m)-1]
+	if s._inp == INPUT_MD {
+		m = highlight_code("c++", m)
+	}
 	s.show_msg("spes", m, time.Now())
-	s._inp.Clear()
-	x, y := s._inp.Origin()
-	s._inp.SetCursor(x, y)
+	s._vinp.Clear()
+	x, y := s._vinp.Origin()
+	s._vinp.SetCursor(x, y)
 	return nil
 }
 
 func (s *_chat_ui) new_line(g *gocui.Gui, v *gocui.View) error {
-	fmt.Fprintf(s._inp, "\n")
+	fmt.Fprintf(s._inp_nm, "\n")
+	return nil
+}
+
+func (s *_chat_ui) to_desktop(g *gocui.Gui, v *gocui.View) error {
+	_jump_to(GetDesktop())
+	return gocui.ErrQuit
+}
+
+func (s *_chat_ui) switch_inp(g *gocui.Gui, v *gocui.View) error {
+	if s._inp == INPUT_NORMAL {
+		s._vinp = s._inp_md
+		s.show_info("switch to markdown input, use Ctrl+Space to send msg.")
+	} else {
+		s._vinp = s._inp_nm
+		s.show_info("switch to normal input, use Ctrl+Space for newline, enter to send msg.")
+	}
+	s._inp = 1 - s._inp
+	set_cur_top_view(g, s._vinp.Name())
 	return nil
 }

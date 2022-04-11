@@ -7,6 +7,10 @@ const (
 	STAT_HGT   = 2 // in chat
 	INP_HGT    = 4 // in chat
 
+	// input methods
+	INPUT_NORMAL = 0
+	INPUT_MD     = 1
+
 	// view names
 	GLOBAL   = ""
 	REG      = "reg"
@@ -24,6 +28,7 @@ const (
 	GRPS     = "grps"
 	SETTINGS = "settings"
 	STAT     = "stat"
-	INP      = "inp"
+	INP_NM   = "inp_nm"
+	INP_MD   = "inp_md"
 	CTX      = "ctx"
 )

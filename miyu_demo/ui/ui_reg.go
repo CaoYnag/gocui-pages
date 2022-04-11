@@ -55,6 +55,9 @@ func (s *_reg_ui) Init() error {
 	s._act = 0
 
 	s._g.SetManagerFunc(s.layout)
+	if e := s.keybindings(s._g); e != nil {
+		return e
+	}
 	return nil
 }
 
@@ -70,9 +73,6 @@ func (s *_reg_ui) Release() {
 }
 
 func (s *_reg_ui) layout(g *gocui.Gui) error {
-	if e := s.keybindings(s._g); e != nil {
-		return e
-	}
 	maxX, maxY := g.Size()
 	if maxX > 100 {
 		maxX = 100
