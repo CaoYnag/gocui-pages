@@ -2,22 +2,10 @@ package ui
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jroimartin/gocui"
 )
-
-func change_ui(ui CUI) (err error) {
-	if _cur != nil {
-		_cur.Release()
-	}
-	err = ui.Init(_g)
-	if err != nil {
-		return
-	}
-	_g.SetManagerFunc(ui.Layout)
-	_cur = ui
-	return nil
-}
 
 func _new_label(g *gocui.Gui, label string, x, y, w, h int) error {
 	_v, err := g.SetView("label_"+label, x, y, x+w, y+h)
@@ -43,7 +31,11 @@ func _new_btn(g *gocui.Gui, label string, x, y, w, h int, cb func(*gocui.Gui, *g
 		v.Wrap = false
 		v.Frame = true
 		// TODO align center
-		fmt.Fprintf(v, label)
+		ns := (w - 1 - len(label)) / 2
+		if ns < 0 {
+			ns = 0
+		}
+		fmt.Fprintf(v, "%s%s", strings.Repeat(" ", ns), label)
 		err = set_key_binding(g, vn, gocui.KeyEnter, gocui.ModNone, cb)
 		if err != nil {
 			return
@@ -66,4 +58,12 @@ func set_key_binding(g *gocui.Gui, v string, k interface{}, m gocui.Modifier, h 
 	// delete exists keybinding first
 	g.DeleteKeybinding(v, k, m)
 	return g.SetKeybinding(v, k, m, h)
+}
+
+func get_value(v *gocui.View) string {
+	val := strings.Fields(v.Buffer())
+	if len(val) > 0 {
+		return val[0]
+	}
+	return ""
 }

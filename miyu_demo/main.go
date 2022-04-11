@@ -6,12 +6,9 @@ import (
 )
 
 func main() {
-	var err error
-	err = ui.Init()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	err = ui.Run()
-	fmt.Printf("Run rslt: %v\n", err)
+	// e := ui.Run(ui.GetLogin("spes", ""))
+	// e := ui.Run(ui.GetReg("spes"))
+	// e := ui.Run(ui.GetDesktop())
+	e := ui.Run(ui.GetChat("Ehh?"))
+	fmt.Println(e)
 }

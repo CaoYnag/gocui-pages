@@ -1,32 +1,25 @@
 package ui
 
-import (
-	"github.com/jroimartin/gocui"
-)
-
 var (
-	_g   *gocui.Gui
 	_cur CUI
+	_nxt CUI
 )
 
-func Init() error {
-	var err error
-	_g, err = gocui.NewGui(gocui.OutputNormal)
-	if err != nil {
-		return err
+func Run(start CUI) error {
+	_nxt = start
+	for _nxt != nil {
+		_cur, _nxt = _nxt, nil
+		if e := _cur.Init(); e != nil {
+			return e
+		}
+		if e := _cur.Run(); e != nil {
+			return e
+		}
+		_cur.Release()
 	}
-	/*err = ui.Keybindings(_g)
-	if err != nil {
-		return
-	}*/
-	change_ui(GetLogin())
 	return nil
 }
 
-func Run() error {
-	defer _g.Close()
-	if err := _g.MainLoop(); err != nil && err != gocui.ErrQuit {
-		return err
-	}
-	return nil
+func _jump_to(nxt CUI) {
+	_nxt = nxt
 }
