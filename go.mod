@@ -3,6 +3,7 @@ module gocui-demo
 go 1.18
 
 require (
+	github.com/CaoYnag/gocui v0.5.1
 	github.com/d4l3k/go-highlight v0.0.0-20170131091508-34974ebcad41
 	github.com/gomarkdown/markdown v0.0.0-20220310201231-552c6011c0b8
 	github.com/jroimartin/gocui v0.5.0

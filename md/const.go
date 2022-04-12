@@ -1,0 +1,68 @@
+package main
+
+const (
+	// default attrs
+	TERM_RESET         = 0
+	TERM_BOLD          = 1
+	TERM_DIM           = 2
+	TERM_ITALIC        = 3
+	TERM_UNDERLINE     = 4
+	TERM_BLINK         = 5
+	TERM_REVERSE       = 7
+	TERM_HIDDEN        = 8
+	TERM_STRIKETHROUGH = 9
+
+	// reset attrs
+	TERM_RESET_BOLD          = 21
+	TERM_RESET_DIM           = 22
+	TERM_RESET_ITALIC        = 23
+	TERM_RESET_UNDERLIN      = 24
+	TERM_RESET_BLINK         = 25
+	TERM_RESET_REVERSE       = 27
+	TERM_RESET_HIDDEN        = 28
+	TERM_RESET_STRIKETHROUGH = 29
+
+	// colors
+	TERM_FG_DFT = 39
+	TERM_BG_DFT = 49
+
+	// color 8
+	TERM_FG_BLACK     = 30
+	TERM_FG_RED       = 31
+	TERM_FG_GREEN     = 32
+	TERM_FG_YELLOW    = 33
+	TERM_FG_BLUE      = 34
+	TERM_FG_MAGENTA   = 35
+	TERM_FG_CYAN      = 36
+	TERM_FG_LIGHTGREY = 37
+
+	TERM_BG_BLACK     = 40
+	TERM_BG_RED       = 41
+	TERM_BG_GREEN     = 42
+	TERM_BG_YELLOW    = 43
+	TERM_BG_BLUE      = 44
+	TERM_BG_MAGENTA   = 45
+	TERM_BG_CYAN      = 46
+	TERM_BG_LIGHTGREY = 47
+
+	// color 16
+	TERM_FG_DARKGREY     = 90
+	TERM_FG_LIGHTRED     = 91
+	TERM_FG_LIGHTGREEN   = 92
+	TERM_FG_LIGHTYELLOW  = 93
+	TERM_FG_LIGHTBLUE    = 94
+	TERM_FG_LIGHTMAGENTA = 95
+	TERM_FG_LIGHTCYAN    = 96
+	TERM_FG_WHITE        = 97
+
+	TERM_BG_DARKGREY     = 100
+	TERM_BG_LIGHTRED     = 101
+	TERM_BG_LIGHTGREEN   = 102
+	TERM_BG_LIGHTYELLOW  = 103
+	TERM_BG_LIGHTBLUE    = 104
+	TERM_BG_LIGHTMAGENTA = 105
+	TERM_BG_LIGHTCYAN    = 106
+	TERM_BG_WHITE        = 107
+
+	// color 256 just use value between [0, 255]
+)

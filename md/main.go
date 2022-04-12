@@ -7,10 +7,35 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jroimartin/gocui"
+	"github.com/CaoYnag/gocui"
+	"github.com/russross/blackfriday/v2"
 )
 
 func main() {
+	style_test()
+}
+
+func style_test() {
+	t := New()
+	t.write("normal ")
+	t.bold(true).write("bold").bold(false).write(" ")
+	t.italic(true).write("italic").italic(false).write(" ")
+	t.dim(true).write("dim").dim(false).write(" ")
+	t.strikethrough(true).write("strikethrough").strikethrough(false).write(" ")
+	t.underline(true).write("underline").underline(false).write(" ")
+	t.blink(true).write("blink").blink(false).write(" ")
+	t.reverse(true).write("reverse").reverse(false).write(" ")
+	t.hidden(true).write("hidden").hidden(false).write(" ")
+	fmt.Println(string(t.flush()))
+}
+
+func md_render() {
+	opt := blackfriday.WithRenderer(New())
+	buf2 := blackfriday.Run([]byte(SOURCE), opt)
+	fmt.Println(string(buf2))
+}
+
+func ui() {
 	g, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
 		log.Panicln(err)

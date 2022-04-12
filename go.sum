@@ -1,3 +1,5 @@
+github.com/CaoYnag/gocui v0.5.1 h1:cudbFOy9RpP3QM+F9Dl9//Xb4t1lgL87N9BHPQhh0WE=
+github.com/CaoYnag/gocui v0.5.1/go.mod h1:Eaa4/UVY18by6sCl5gtgq34/bg4Dyfr31uQXVUzythk=
 github.com/d4l3k/go-highlight v0.0.0-20170131091508-34974ebcad41 h1:ftH2zX4hxCODAd5TgiDeAQi8OgJkWw+dTmYkyMZero4=
 github.com/d4l3k/go-highlight v0.0.0-20170131091508-34974ebcad41/go.mod h1:KC2fmY1miEAipbeOZ5dY4PZha/jHkqn6IosSy/lXxCc=
 github.com/fatih/color v1.13.0 h1:8LOYc1KYPPmyKMuN8QV2DNRWNbLo6LZ0iLs8+mlH53w=

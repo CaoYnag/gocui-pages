@@ -27,4 +27,9 @@ var (
 func main() {
 	buf := blackfriday.Run([]byte(SOURCE))
 	fmt.Println(string(buf))
+	opt := blackfriday.WithRenderer(blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
+		Flags: blackfriday.CommonHTMLFlags,
+	}))
+	buf2 := blackfriday.Run([]byte(SOURCE), opt)
+	fmt.Println(string(buf2))
 }
