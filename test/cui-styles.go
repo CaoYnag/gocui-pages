@@ -20,8 +20,10 @@ func main() {
 	}
 	fmt.Println()
 	fmt.Println("\x1b[1mbold\x1b[0m")
+	fmt.Println("\x1b[2mdim\x1b[0m")
 	fmt.Println("\x1b[3mitalic\x1b[0m")
 	fmt.Println("\x1b[4munderline\x1b[0m")
+	fmt.Println("\x1b[5mblink\x1b[0m")
 	fmt.Println("\x1b[9mstrikethrough\x1b[0m")
 	fmt.Println("\x1b[1m\x1b[3m\x1b[4m\x1b[9m \033[31;1mcolors!\033[0m\x1b[0m\x1b[0m\x1b[0m\x1b[0m")
 	fmt.Println("\x1b[48;5;228m\x1b[30m \x1b[38;5;199m hello,world! \x1b[0m \x1b[0m")

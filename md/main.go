@@ -12,7 +12,8 @@ import (
 )
 
 func main() {
-	style_test()
+	//style_test()
+	md_render()
 }
 
 func style_test() {

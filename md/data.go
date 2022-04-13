@@ -10,7 +10,13 @@ hello,*world!*
 - list 1
 - list 2
 
----
+> ref here
+
+******
+
+------
+
+======
 
 1. ordered 1
 2. ordered 2
@@ -25,14 +31,10 @@ hello,*world!*
 		"#include <iostream>\n" +
 		"using namespace std;\n" +
 		"int main(){}\n" +
-		"```"
-
-	COLOR_GREY uint = iota
-	COLOR_RED
-	COLOR_GREEN
-	COLOR_YELLOW
-	COLOR_PURPLE
-	COLOR_PINK
-	COLOR_CYAN
-	COLOR_WHITE
+		"```\n" +
+		"do not `think`, do it!\n" +
+		`
+then you will --free--
+==here== we are
+`
 )

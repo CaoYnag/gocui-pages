@@ -39,3 +39,9 @@ BenchmarkBlackfriday-8             31867             74186 ns/op
 PASS
 ok      gocui-demo/test/bench   38.905s
 ```
+
+### theme
+need at least two default theme(dark/light).
+
+### Optimize
+opt later

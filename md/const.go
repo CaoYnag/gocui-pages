@@ -2,21 +2,22 @@ package main
 
 const (
 	// default attrs
-	TERM_RESET         = 0
-	TERM_BOLD          = 1
-	TERM_DIM           = 2
-	TERM_ITALIC        = 3
-	TERM_UNDERLINE     = 4
-	TERM_BLINK         = 5
-	TERM_REVERSE       = 7
-	TERM_HIDDEN        = 8
-	TERM_STRIKETHROUGH = 9
+	TERM_RESET            = 0
+	TERM_BOLD             = 1
+	TERM_DIM              = 2
+	TERM_ITALIC           = 3
+	TERM_UNDERLINE        = 4
+	TERM_DOUBLE_UNDERLINE = 21
+	TERM_BLINK            = 5
+	TERM_REVERSE          = 7
+	TERM_HIDDEN           = 8
+	TERM_STRIKETHROUGH    = 9
 
 	// reset attrs
-	TERM_RESET_BOLD          = 21
+	TERM_RESET_BOLD          = 22
 	TERM_RESET_DIM           = 22
 	TERM_RESET_ITALIC        = 23
-	TERM_RESET_UNDERLIN      = 24
+	TERM_RESET_UNDERLINE     = 24
 	TERM_RESET_BLINK         = 25
 	TERM_RESET_REVERSE       = 27
 	TERM_RESET_HIDDEN        = 28
