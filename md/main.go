@@ -13,6 +13,7 @@ import (
 
 func main() {
 	//style_test()
+	ast_render()
 	md_render()
 }
 
@@ -30,9 +31,14 @@ func style_test() {
 	fmt.Println(string(t.flush()))
 }
 
+func ast_render() {
+	opt := blackfriday.WithRenderer(NewASTRender())
+	buf2 := blackfriday.Run(SOURCE, opt)
+	fmt.Println(string(buf2))
+}
 func md_render() {
 	opt := blackfriday.WithRenderer(New())
-	buf2 := blackfriday.Run([]byte(SOURCE), opt)
+	buf2 := blackfriday.Run(SOURCE, opt)
 	fmt.Println(string(buf2))
 }
 

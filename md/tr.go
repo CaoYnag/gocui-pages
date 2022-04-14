@@ -10,6 +10,9 @@ import (
 type TermRender struct {
 	params []int
 	buf    bytes.Buffer
+	theme  *md_theme
+	styles style_stack
+	curs   *Style // current style
 }
 
 func New() *TermRender {

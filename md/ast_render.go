@@ -7,10 +7,13 @@ import (
 	"github.com/russross/blackfriday/v2"
 )
 
-func (s *TermRender) RenderNode(w io.Writer, node *blackfriday.Node, entering bool) blackfriday.WalkStatus {
-	if s.theme == nil {
-		s.theme = TestTheme()
-	}
+type ASTRender struct{}
+
+func NewASTRender() *ASTRender {
+	return &ASTRender{}
+}
+
+func (s *ASTRender) RenderNode(w io.Writer, node *blackfriday.Node, entering bool) blackfriday.WalkStatus {
 	switch node.Type {
 	case blackfriday.Text:
 		w.Write([]byte(string(node.Literal)))
@@ -92,5 +95,5 @@ func (s *TermRender) RenderNode(w io.Writer, node *blackfriday.Node, entering bo
 	}
 	return blackfriday.GoToNext
 }
-func (s *TermRender) RenderHeader(w io.Writer, ast *blackfriday.Node) {}
-func (s *TermRender) RenderFooter(w io.Writer, ast *blackfriday.Node) {}
+func (s *ASTRender) RenderHeader(w io.Writer, ast *blackfriday.Node) {}
+func (s *ASTRender) RenderFooter(w io.Writer, ast *blackfriday.Node) {}
