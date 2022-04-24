@@ -9,7 +9,7 @@ package ui
 
 import (
 	"fmt"
-	"time"
+	"gocui-demo/miyu_demo/mocks/msg"
 
 	"github.com/jroimartin/gocui"
 )
@@ -27,6 +27,10 @@ type _desktop_ui struct {
 	VIEWS []string
 	LEN   int
 	NUMS  map[string]int
+
+	_users    map[string]*msg.UserInfo  // users
+	_groups   map[string]*msg.GroupInfo // groups
+	_sessions map[string]*msg.ChatMsg   // user or group name
 }
 
 const (
@@ -52,6 +56,9 @@ func (s *_desktop_ui) Init() error {
 	if e := s.keybindings(s._g); e != nil {
 		return e
 	}
+	s._users = make(map[string]*msg.UserInfo)
+	s._groups = make(map[string]*msg.GroupInfo)
+	s._sessions = make(map[string]*msg.ChatMsg)
 	return nil
 }
 
@@ -97,9 +104,6 @@ func (s *_desktop_ui) layout(g *gocui.Gui) error {
 		s._usrs.Highlight = true
 		s._usrs.SelBgColor = gocui.ColorGreen
 		s._usrs.Editable = false
-		s.add_usr("spes2", true)
-		s.add_usr("spes3", false)
-		s.add_usr("ehh1", true)
 	}
 	s._grps, err = g.SetView(GRPS, SIDE_WID, -1, maxX, maxY-WIDGET_HGT)
 	if err != nil {
@@ -110,34 +114,6 @@ func (s *_desktop_ui) layout(g *gocui.Gui) error {
 		s._grps.SelBgColor = gocui.ColorGreen
 		s._grps.Editable = false
 		s._grps.Autoscroll = true
-		s.add_rooms("Just do IT")
-		s.add_rooms("老 司 机 带 带 窝 ! ")
-		s.add_rooms("游 戏 开 黑 搞 起 !")
-		s.add_rooms("三 月 读 书 会 1")
-		s.add_rooms("三 月 读 书 会 2")
-		s.add_rooms("三 月 读 书 会 3")
-		s.add_rooms("三 月 读 书 会 4")
-		s.add_rooms("三 月 读 书 会 5")
-		s.add_rooms("三 月 读 书 会 6")
-		s.add_rooms("三 月 读 书 会 7")
-		s.add_rooms("三 月 读 书 会 8")
-		s.add_rooms("三 月 读 书 会 9")
-		s.add_rooms("三 月 读 书 会 10")
-		s.add_rooms("三 月 读 书 会 11")
-		s.add_rooms("三 月 读 书 会 12")
-		s.add_rooms("三 月 读 书 会 13")
-		s.add_rooms("三 月 读 书 会 14")
-		s.add_rooms("三 月 读 书 会 15")
-		s.add_rooms("三 月 读 书 会 16")
-		s.add_rooms("三 月 读 书 会 17")
-		s.add_rooms("三 月 读 书 会 18")
-		s.add_rooms("三 月 读 书 会 19")
-		s.add_rooms("三 月 读 书 会 20")
-		s.add_rooms("三 月 读 书 会 21")
-		s.add_rooms("三 月 读 书 会 22")
-		s.add_rooms("三 月 读 书 会 23")
-		s.add_rooms("三 月 读 书 会 24")
-		s.add_rooms("三 月 读 书 会 25")
 	}
 	s._settings, err = g.SetView(SETTINGS, SIDE_WID, -1, maxX, maxY-WIDGET_HGT)
 	if err != nil {
@@ -158,9 +134,6 @@ func (s *_desktop_ui) layout(g *gocui.Gui) error {
 		if e := s.focus_ssn(g, nil); e != nil {
 			return err
 		}
-		s.add_ssn("ehh", "hello", time.Now(), true)
-		s.add_ssn("ehh2", "hello", time.Now(), false)
-		s.add_ssn("Just do IT", "yes!", time.Now(), false)
 	}
 
 	s._info, err = g.SetView(INFO, -1, maxY-WIDGET_HGT, maxX, maxY)
@@ -249,29 +222,6 @@ func (s *_desktop_ui) show_info(msg string) {
 	fmt.Fprintf(s._info, "\033[31;1m%s\033[0m", msg)
 }
 
-func (s *_desktop_ui) add_ssn(from, msg string, ts time.Time, unread bool) {
-	s.NUMS[SSN]++
-	if unread {
-		fmt.Fprintf(s._ssn, "\033[31;1m%s:%s\033[0m\n", from, msg)
-	} else {
-		fmt.Fprintf(s._ssn, "%s:%s\n", from, msg)
-	}
-}
-
-func (s *_desktop_ui) add_usr(name string, online bool) {
-	s.NUMS[USRS]++
-	if online {
-		fmt.Fprintf(s._usrs, "\033[32;1m%s\033[0m\n", name)
-	} else {
-		fmt.Fprintf(s._usrs, "\033[31;1m%s\033[0m\n", name)
-	}
-}
-
-func (s *_desktop_ui) add_rooms(name string) {
-	s.NUMS[GRPS]++
-	fmt.Fprintf(s._grps, "%s\n", name)
-}
-
 func (s *_desktop_ui) cursor_down(g *gocui.Gui, v *gocui.View) error {
 	if v != nil {
 		ox, oy := v.Origin()
@@ -301,25 +251,6 @@ func (s *_desktop_ui) cursor_up(g *gocui.Gui, v *gocui.View) error {
 		}
 		fmt.Fprintf(s._info, "\nsel[%s]: %s", v.Name(), v.BufferLines()[ty])
 	}
-	return nil
-}
-
-func (s *_desktop_ui) chat_with_usr(g *gocui.Gui, v *gocui.View) error {
-	_, oy := v.Origin()
-	_, cy := v.Cursor()
-	_jump_to(GetChat(v.BufferLines()[cy-oy]))
-	return gocui.ErrQuit
-}
-func (s *_desktop_ui) enter_ssn(g *gocui.Gui, v *gocui.View) error {
-	_, oy := v.Origin()
-	_, cy := v.Cursor()
-	fmt.Fprintf(s._info, "\nenter ssn: %s", v.BufferLines()[cy-oy])
-	return nil
-}
-func (s *_desktop_ui) enter_room(g *gocui.Gui, v *gocui.View) error {
-	_, oy := v.Origin()
-	_, cy := v.Cursor()
-	fmt.Fprintf(s._info, "\nenter room: %s", v.BufferLines()[cy-oy])
 	return nil
 }
 func (s *_desktop_ui) focus_ssn(g *gocui.Gui, v *gocui.View) error {

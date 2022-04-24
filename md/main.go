@@ -13,7 +13,7 @@ import (
 
 func main() {
 	//style_test()
-	ast_render()
+	//ast_render()
 	md_render()
 }
 

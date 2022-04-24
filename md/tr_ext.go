@@ -2,10 +2,13 @@ package main
 
 type style_stack []*Style
 
-func (s style_stack) push(st *Style) style_stack {
+// stack: push
+func (s style_stack) _push(st *Style) style_stack {
 	return append(s, st)
 }
-func (s style_stack) pop() (ss style_stack, st *Style) {
+
+// stack: pop
+func (s style_stack) _pop() (ss style_stack, st *Style) {
 	l := len(s)
 	if l == 0 {
 		return s, nil
@@ -13,3 +16,14 @@ func (s style_stack) pop() (ss style_stack, st *Style) {
 	l = l - 1
 	return s[:l], s[l]
 }
+
+func (s *TermRender) push_style(st *Style) {
+	old := s.curs
+	s.curs = st
+	s.styles = s.styles._push(st)
+	s.update_style(old, s.curs)
+}
+
+func (s *TermRender) pop_style() {}
+
+func (s *TermRender) update_style(old *Style, now *Style) {}
