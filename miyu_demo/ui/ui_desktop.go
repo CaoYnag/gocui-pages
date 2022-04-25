@@ -59,6 +59,7 @@ func (s *_desktop_ui) Init() error {
 	s._users = make(map[string]*msg.UserInfo)
 	s._groups = make(map[string]*msg.GroupInfo)
 	s._sessions = make(map[string]*msg.ChatMsg)
+	s.load_cache()
 	return nil
 }
 
@@ -104,6 +105,7 @@ func (s *_desktop_ui) layout(g *gocui.Gui) error {
 		s._usrs.Highlight = true
 		s._usrs.SelBgColor = gocui.ColorGreen
 		s._usrs.Editable = false
+		s.refresh_users()
 	}
 	s._grps, err = g.SetView(GRPS, SIDE_WID, -1, maxX, maxY-WIDGET_HGT)
 	if err != nil {
@@ -114,6 +116,7 @@ func (s *_desktop_ui) layout(g *gocui.Gui) error {
 		s._grps.SelBgColor = gocui.ColorGreen
 		s._grps.Editable = false
 		s._grps.Autoscroll = true
+		s.refresh_groups()
 	}
 	s._settings, err = g.SetView(SETTINGS, SIDE_WID, -1, maxX, maxY-WIDGET_HGT)
 	if err != nil {
@@ -131,6 +134,7 @@ func (s *_desktop_ui) layout(g *gocui.Gui) error {
 		s._ssn.Highlight = true
 		s._ssn.SelBgColor = gocui.ColorGreen
 		s._ssn.Editable = false
+		s.refresh_snss()
 		if e := s.focus_ssn(g, nil); e != nil {
 			return err
 		}

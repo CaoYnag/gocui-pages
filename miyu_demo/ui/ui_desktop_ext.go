@@ -3,6 +3,9 @@ package ui
 import (
 	"fmt"
 	"gocui-demo/miyu_demo/mocks/msg"
+	"math/rand"
+	"sort"
+	"strconv"
 	"time"
 
 	"github.com/jroimartin/gocui"
@@ -27,43 +30,24 @@ func (s *_desktop_ui) enter_room(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (s *_desktop_ui) add_ssn(from, msg string, ts time.Time, unread bool) {
-	s.NUMS[SSN]++
-	if unread {
-		fmt.Fprintf(s._ssn, "\033[31;1m%s:%s\033[0m\n", from, msg)
-	} else {
-		fmt.Fprintf(s._ssn, "%s:%s\n", from, msg)
-	}
-}
-
-func (s *_desktop_ui) add_usr(name string, online bool) {
-	s.NUMS[USRS]++
-	if online {
-		fmt.Fprintf(s._usrs, "\033[32;1m%s\033[0m\n", name)
-	} else {
-		fmt.Fprintf(s._usrs, "\033[31;1m%s\033[0m\n", name)
-	}
-}
-
-func (s *_desktop_ui) add_rooms(name string) {
-	s.NUMS[GRPS]++
-	fmt.Fprintf(s._grps, "%s\n", name)
-}
-
 // user stat change
 func (s *_desktop_ui) on_user(u *msg.UserInfo) {
 	u, found := s._users[u.Name]
 	if !found {
 		// new register
-
+		s._users[u.Name] = u
 	}
+	s.refresh_users()
 }
 
 // TODO finish groups in future
 func (s *_desktop_ui) on_group() {}
 
 // rcv chat msg TODO user msg only, finish group msg in future
-func (s *_desktop_ui) on_msg(m *msg.ChatMsg) {}
+func (s *_desktop_ui) on_msg(m *msg.ChatMsg) {
+	s._sessions[m.From] = m
+	s.refresh_snss()
+}
 
 // load user/group/session cache in init
 func (s *_desktop_ui) load_cache() {
@@ -94,23 +78,70 @@ func (s *_desktop_ui) load_cache() {
 	s._sessions["test1"] = &msg.ChatMsg{
 		From:    "test1",
 		To:      "spes",
-		Content: "hello",
+		Content: "fuck u nvidia!",
 		Ts:      time.Now(),
 	}
 	s._sessions["test2"] = &msg.ChatMsg{
 		From:    "test2",
 		To:      "spes",
-		Content: "testtestpingpingping",
+		Content: "终 有 一 天,hhh",
 		Ts:      time.Now(),
 	}
 }
 
 func (s *_desktop_ui) refresh_users() {
+	// TODO do not sort, just show all user by default.
+	var usrs []*msg.UserInfo
+	for key := range s._users {
+		usrs = append(usrs, s._users[key])
+	}
 
+	s._usrs.Clear()
+	s.NUMS[USRS] = len(usrs)
+	for idx := range usrs {
+		u := usrs[idx]
+		if u.State == msg.STATE_ONLINE {
+			fmt.Fprintf(s._usrs, "\033[32;1m%s\033[0m(%s)\n", u.Nick, u.Name)
+		} else {
+			fmt.Fprintf(s._usrs, "\033[31;1m%s\033[0m(%s)\n", u.Nick, u.Name)
+		}
+	}
 }
 func (s *_desktop_ui) refresh_groups() {
-
+	s.NUMS[GRPS] = 0
 }
 func (s *_desktop_ui) refresh_snss() {
+	// sort by ts
+	var ssns []*msg.ChatMsg = nil
+	for key := range s._sessions {
+		ssns = append(ssns, s._sessions[key])
+	}
+	sort.SliceStable(ssns, func(i, j int) bool {
+		return ssns[i].Ts.After(ssns[j].Ts)
+	})
 
+	s._ssn.Clear()
+	for idx := range ssns {
+		ssn := ssns[idx]
+		fmt.Fprintf(s._ssn, "\x1b[31;1m%s:%s\x1b[0m\n", ssn.From, ssn.Content)
+	}
+	s.NUMS[SSN] = len(ssns)
+}
+
+/**************************************/
+/**       some mocks functions       **/
+/**************************************/
+var (
+	user_gen int = 1
+)
+
+func (s *_desktop_ui) add_random_user(g *gocui.Gui, v *gocui.View) error {
+	CODE := strconv.Itoa(user_gen)
+	s.on_user(&msg.UserInfo{
+		Name:  "gen_" + CODE,
+		Nick:  "Test" + CODE,
+		Sex:   "male",
+		State: rand.Int() % 2,
+	})
+	return nil
 }
