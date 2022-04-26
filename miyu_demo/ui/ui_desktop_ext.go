@@ -2,10 +2,10 @@ package ui
 
 import (
 	"fmt"
+	"gocui-demo/miyu_demo/mocks/data"
 	"gocui-demo/miyu_demo/mocks/msg"
 	"math/rand"
 	"sort"
-	"strconv"
 	"time"
 
 	"github.com/jroimartin/gocui"
@@ -32,11 +32,7 @@ func (s *_desktop_ui) enter_room(g *gocui.Gui, v *gocui.View) error {
 
 // user stat change
 func (s *_desktop_ui) on_user(u *msg.UserInfo) {
-	u, found := s._users[u.Name]
-	if !found {
-		// new register
-		s._users[u.Name] = u
-	}
+	s._users[u.Name] = u
 	s.refresh_users()
 }
 
@@ -131,17 +127,19 @@ func (s *_desktop_ui) refresh_snss() {
 /**************************************/
 /**       some mocks functions       **/
 /**************************************/
-var (
-	user_gen int = 1
-)
 
-func (s *_desktop_ui) add_random_user(g *gocui.Gui, v *gocui.View) error {
-	CODE := strconv.Itoa(user_gen)
-	s.on_user(&msg.UserInfo{
-		Name:  "gen_" + CODE,
-		Nick:  "Test" + CODE,
-		Sex:   "male",
-		State: rand.Int() % 2,
-	})
+func (s *_desktop_ui) rand_user(g *gocui.Gui, v *gocui.View) error {
+	s.on_user(data.RandUser())
+	return nil
+}
+
+func (s *_desktop_ui) rand_msg(g *gocui.Gui, v *gocui.View) error {
+	var usrs []*msg.UserInfo
+	for key := range s._users {
+		usrs = append(usrs, s._users[key])
+	}
+	d := data.RandMsg(usrs[rand.Intn(len(usrs))].Name)
+	d.To = "spes"
+	s.on_msg(d)
 	return nil
 }

@@ -218,6 +218,14 @@ func (s *_desktop_ui) keybindings(g *gocui.Gui) error {
 		return err
 	}
 
+	// mocks
+	if err := set_key_binding(g, GLOBAL, gocui.KeyCtrlU, gocui.ModNone, s.rand_user); err != nil {
+		return err
+	}
+	if err := set_key_binding(g, GLOBAL, gocui.KeyCtrlM, gocui.ModNone, s.rand_msg); err != nil {
+		return err
+	}
+
 	return nil
 }
 
