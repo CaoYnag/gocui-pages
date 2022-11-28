@@ -9,7 +9,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/jroimartin/gocui"
+	"github.com/CaoYnag/gocui"
 )
 
 var (

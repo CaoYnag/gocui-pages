@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jroimartin/gocui"
+	"github.com/CaoYnag/gocui"
 )
 
 const (

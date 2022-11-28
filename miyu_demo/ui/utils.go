@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jroimartin/gocui"
+	"github.com/CaoYnag/gocui"
 )
 
 func _new_label(g *gocui.Gui, label string, x, y, w, h int) error {

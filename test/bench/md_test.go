@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"testing"
 
@@ -52,10 +51,11 @@ func BenchmarkBlackfriday(b *testing.B) {
 	}
 }
 
-func TestMain(m *testing.M) {
+/* func TestMain(m *testing.M) {
 	if e := setup(); e != nil {
 		fmt.Println(e)
 		os.Exit(1)
 	}
 	os.Exit(m.Run())
 }
+*/

@@ -3,7 +3,7 @@ package ui
 import (
 	"fmt"
 
-	"github.com/jroimartin/gocui"
+	"github.com/CaoYnag/gocui"
 )
 
 type _login_ui struct {
@@ -162,7 +162,7 @@ func (s *_login_ui) do_login(g *gocui.Gui, v *gocui.View) error {
 	// TODO do login, and handle result
 	s.show_info(fmt.Sprintf("login: %s - %s", s._data.name, s._data.psw))
 	if s._data.name == "spes" && s._data.psw == "123" {
-		_jump_to(GetDesktop())
+		_jump_to(GetSync())
 		return gocui.ErrQuit
 	}
 	return nil

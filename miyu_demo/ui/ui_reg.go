@@ -3,7 +3,7 @@ package ui
 import (
 	"fmt"
 
-	"github.com/jroimartin/gocui"
+	"github.com/CaoYnag/gocui"
 )
 
 type _reg_ui struct {

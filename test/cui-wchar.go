@@ -1,6 +1,3 @@
-/*
-Hello Twice!
-*/
 package main
 
 import (
@@ -8,23 +5,7 @@ import (
 	"log"
 
 	"github.com/CaoYnag/gocui"
-	"github.com/d4l3k/go-highlight"
 )
-
-var CODE = `#include <iostream>
-using namespace std;
-
-template<typename T>
-class Sample{};
-
-typedef voidp void*;
-
-int main(int argc, char** argv)
-{
-	cout << "hello, world!" << endl;
-	return 0;
-}
-`
 
 func main() {
 	g, err := gocui.NewGui(gocui.OutputNormal)
@@ -44,22 +25,22 @@ func main() {
 	}
 }
 
-func highlight_code(lang, code string) string {
-	s, _ := highlight.Term(lang, []byte(code))
-	return string(s)
-}
-
 func layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
-	if v, err := g.SetView("hello", -1, -1, maxX, maxY); err != nil {
+	if v, err := g.SetView("hello", 0, 0, maxX-1, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		fmt.Fprintln(v, highlight_code("c++", CODE))
+		v.Title = "中文测试English"
+		n1, _ := fmt.Fprintln(v, "ascii asdnioqu172841958109(*^&%%$$%^)") // 37
+		n2, _ := fmt.Fprintln(v, "这是一段中文！！")                              // 8
+		n3, _ := fmt.Fprintln(v, "やばい!")                                  // 4
+		n4, _ := fmt.Fprintln(v, "▲№§→←↑◎◇↓↓℃℃￣＼＆☆")                      // 16
+		n5, _ := fmt.Fprintln(v, "end")                                   // 4
+		fmt.Fprintf(v, "%d %d %d %d %d\n", n1, n2, n3, n4, n5)
 	}
 	return nil
 }
-
 func quit(g *gocui.Gui, v *gocui.View) error {
 	return gocui.ErrQuit
 }

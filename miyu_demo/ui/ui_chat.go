@@ -1,7 +1,5 @@
 /*
 Chat UI
-TODO:
-- fix chinese display
 */
 
 package ui
@@ -10,8 +8,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/CaoYnag/gocui"
 	"github.com/d4l3k/go-highlight"
-	"github.com/jroimartin/gocui"
 )
 
 type _chat_ui struct {
@@ -83,15 +81,6 @@ func (s *_chat_ui) layout(g *gocui.Gui) error {
 		s._info.Autoscroll = true
 		fmt.Fprintf(s._info, "nothing...")
 	}
-	s._inp_nm, err = g.SetView(INP_NM, -1, maxY-WIDGET_HGT-INP_HGT, maxX, maxY-WIDGET_HGT)
-	if err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		s._inp_nm.Editable = true
-		s._inp_nm.Autoscroll = true
-		g.SetCurrentView(INP_NM)
-	}
 	s._inp_md, err = g.SetView(INP_MD, -1, maxY-WIDGET_HGT-INP_HGT, maxX, maxY-WIDGET_HGT)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
@@ -100,6 +89,16 @@ func (s *_chat_ui) layout(g *gocui.Gui) error {
 		s._inp_md.Editable = true
 		s._inp_md.Autoscroll = true
 	}
+	s._inp_nm, err = g.SetView(INP_NM, -1, maxY-WIDGET_HGT-INP_HGT, maxX, maxY-WIDGET_HGT)
+	if err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		s._inp_nm.Editable = true
+		s._inp_nm.Autoscroll = true
+		s._inp = INPUT_MD
+		s.switch_inp(g, nil) // default use normal mode
+	}
 	s._ctx, err = g.SetView(CTX, -1, STAT_HGT, maxX, maxY-WIDGET_HGT-INP_HGT)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
@@ -107,9 +106,9 @@ func (s *_chat_ui) layout(g *gocui.Gui) error {
 		}
 		s._ctx.Editable = false
 		s._ctx.Autoscroll = true
-		s.show_msg(s._data.name, "在 嘛 ?", time.Now())
-		s.show_msg("spes", "不 在 !", time.Now())
-		s.show_msg("spes", "里 四 居 !", time.Now())
+		s.show_msg(s._data.name, "在嘛?", time.Now())
+		s.show_msg("spes", "不在!", time.Now())
+		s.show_msg("spes", "里四居!", time.Now())
 	}
 	return nil
 }
@@ -183,10 +182,10 @@ func (s *_chat_ui) to_desktop(g *gocui.Gui, v *gocui.View) error {
 func (s *_chat_ui) switch_inp(g *gocui.Gui, v *gocui.View) error {
 	if s._inp == INPUT_NORMAL {
 		s._vinp = s._inp_md
-		s.show_info("switch to markdown input, use Ctrl+Space to send msg.")
+		s.show_info("<MODE:md> use Ctrl+Space to send msg.")
 	} else {
 		s._vinp = s._inp_nm
-		s.show_info("switch to normal input, use Ctrl+Space for newline, enter to send msg.")
+		s.show_info("<MODE:nm> use Ctrl+Space for newline, enter to send msg.")
 	}
 	s._inp = 1 - s._inp
 	set_cur_top_view(g, s._vinp.Name())

@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"gocui-demo/miyu_demo/mocks/msg"
 
-	"github.com/jroimartin/gocui"
+	"github.com/CaoYnag/gocui"
 )
 
 type _desktop_ui struct {

@@ -8,7 +8,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/jroimartin/gocui"
+	"github.com/CaoYnag/gocui"
 )
 
 func (s *_desktop_ui) chat_with_usr(g *gocui.Gui, v *gocui.View) error {
